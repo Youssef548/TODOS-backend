@@ -6,11 +6,12 @@
     "express": "^4.19.2",
     "init": "^0.1.2",
     "mongoose": "^8.4.3",
-    "tsx": "^4.15.6"
+    "tsx": "^4.15.7"
   },
   "scripts": {
     "start:dev": "cross-env NODE_ENV=development tsx ./src/app.ts",
     "start:prod": "cross-env NODE_ENV=production tsx ./src/app.ts",
+    "build": "tsc",
     "start": "cross-env NODE_ENV=production tsx src/app.ts",
     "start:test": "cross-env NODE_ENV=test tsx ./src/app.ts"
   },
