@@ -3,6 +3,7 @@ import bodyParser from "body-parser";
 import connectDB from "./config/database";
 import dotenv from "dotenv";
 import errorHandler from "./middleware/Error.middleware";
+import authRoutes from "./routes/auth.route";
 
 // Load environment variables
 dotenv.config();
@@ -14,6 +15,8 @@ const app = express();
 app.use(bodyParser.json());
 
 // Routes
+app.use("/api/auth", authRoutes)
+
 
 // error handler
 app.use(errorHandler);
