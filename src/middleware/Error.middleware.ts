@@ -1,6 +1,6 @@
 // errorHandler.ts
 import { Request, Response, NextFunction } from 'express';
-import { CustomError } from '../utils/error.ts'; // Adjust the path to your CustomError class
+import { CustomError } from '../utils/error'; // Adjust the path to your CustomError class
 
 // Error handling middleware function
 const errorHandler = (err: CustomError, req: Request, res: Response, next: NextFunction) => {
