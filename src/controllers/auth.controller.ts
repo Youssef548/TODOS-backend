@@ -13,7 +13,7 @@ export const signUp = async function (
   res: Response,
   next: NextFunction
 ) {
-    const {firstname , lastname , email , password } = req.body;
+    const {firstName , lastName , email , password } = req.body;
 
     try {
       const user = await User.findOne({ email });
@@ -22,17 +22,21 @@ export const signUp = async function (
       }
       const hashedPassword = await bcrypt.hash(password, 10);
       const newUser = new User({
-        firstname,
-        lastname,
+        firstName,
+        lastName,
         email,
         password:  hashedPassword,
         createdAt: Date.now().toString(),
     });
       await newUser.save();
       
+      const token = jwt.sign({ id: newUser._id }, process.env.JWT_SECRET as string, {
+        expiresIn: "1h",
+      });
       res.status(201).json({
         status: "success",
         message: "User created successfully",
+        token,
         data: {
           user: newUser
         }
