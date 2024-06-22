@@ -5,10 +5,12 @@ import dotenv from "dotenv";
 import errorHandler from "./middleware/Error.middleware";
 import authRoutes from "./routes/auth.route";
 import cors from "cors";
+import swaggerUi from 'swagger-ui-express';
+import swaggerDocument from './docs/swagger.json';
 
 // Load environment variables
 dotenv.config();
-const PORT = process.env.PORT || 3000;
+const PORT = Number(process.env.PORT) || 3000;
 
 const app = express();
 
@@ -30,9 +32,13 @@ app.use(cors(corsOptions));
 // Middleware
 app.use(bodyParser.json());
 
-// Routes
-app.use("/api/auth", authRoutes)
+// swaggerDocs(app , PORT);
 
+// Routes
+app.use("/api", authRoutes);
+
+// swagger
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 
 // error handler
 app.use(errorHandler);
