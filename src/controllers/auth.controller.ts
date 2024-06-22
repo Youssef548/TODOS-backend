@@ -2,6 +2,11 @@ import User from "../models/user.model";
 import { NextFunction, Request, Response } from "express";
 import { errorHandler } from "../utils/error";
 import bcrypt from "bcrypt";
+import { CustomError } from '../utils/error';
+import jwt from "jsonwebtoken";
+import dotenv from "dotenv";
+
+dotenv.config();
 
 export const signUp = async function (
   req: Request,
@@ -24,6 +29,7 @@ export const signUp = async function (
         createdAt: Date.now().toString(),
     });
       await newUser.save();
+      
       res.status(201).json({
         status: "success",
         message: "User created successfully",
@@ -32,7 +38,8 @@ export const signUp = async function (
         }
       });
     } catch (err) {
-      next(errorHandler(500, err.message));
+      const error = err as CustomError;
+      next(errorHandler(500, error.message));
     }
 };
 
@@ -51,14 +58,21 @@ export const signIn = async function (
       if (!isMatch) {
         return next(errorHandler(400, "Invalid credentials"));
       }
+
+      const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET as string, {
+        expiresIn: "1h",
+      });
+
       res.status(200).json({
         status: "success",
         message: "User logged in successfully",
+        token,
         data: {
           user
         }
       });
     } catch (err) {
-      next(errorHandler(500, err.message));
+      const error = err as CustomError;
+      next(errorHandler(500, error.message));
     }
 }
