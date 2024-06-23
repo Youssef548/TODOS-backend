@@ -5,11 +5,19 @@ import bcrypt from "bcrypt";
 import { CustomError } from '../utils/error';
 import dotenv from "dotenv";
 
+
+const handleAuthorizeAction = (reqUserId: string , userId: string, next:NextFunction) => {
+  if(reqUserId !== userId) {
+    return next(errorHandler(401, "You are not authorized to perform this action"));
+  }
+}
 interface RequestWithUserId extends Request { 
     user: {
         id: string;
     }
 }
+
+
 
 dotenv.config();
 
@@ -17,10 +25,7 @@ export const updateUser = async function (req: Request, res: Response, next: Nex
   const { firstName, lastName, email, password, PIN } = req.body;
   const { userId } = req.params;
   const request = req as RequestWithUserId;
-
-  if (request.user.id !== userId) {
-    return next(errorHandler(401, "You are not authorized to perform this action"));
-  }
+  handleAuthorizeAction(request.user.id, userId , next)
 
   try {
     const user = await User.findById(userId);
@@ -58,3 +63,26 @@ export const updateUser = async function (req: Request, res: Response, next: Nex
     next(errorHandler(500, error.message));
   }
 };
+
+export const deleteUser = async function (req: Request, res: Response, next: NextFunction) { 
+  const { userId } = req.params;
+  const request = req as RequestWithUserId;
+  handleAuthorizeAction(request.user.id, userId , next)
+
+
+  try {
+    const user = await User.findById(userId);
+    if (!user) {
+      return next(errorHandler(404, "User not found"));
+    }
+    await User.findByIdAndDelete(userId);
+    res.status(204).json({
+      status: "success",
+      message: "User deleted successfully",
+      data: null
+    });
+  } catch(err) {
+    const error = err as CustomError;
+    next(errorHandler(500, error.message));
+  }
+}
