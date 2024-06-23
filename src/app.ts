@@ -4,6 +4,7 @@ import connectDB from "./config/database";
 import dotenv from "dotenv";
 import errorHandler from "./middleware/Error.middleware";
 import authRoutes from "./routes/auth.route";
+import userRoutes from "./routes/user.route";
 import cors from "cors";
 import swaggerUi from 'swagger-ui-express';
 import swaggerDocument from './docs/swagger.json';
@@ -36,6 +37,7 @@ app.use(bodyParser.json());
 
 // Routes
 app.use("/api", authRoutes);
+app.use('/api', userRoutes)
 
 // swagger
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
